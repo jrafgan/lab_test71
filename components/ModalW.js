@@ -1,6 +1,6 @@
 import React from 'react';
-import {StyleSheet, Text, View, Image, Modal, TouchableHighlight, TextInput} from 'react-native';
-import {changeValue, fetchDishes, toggleModal} from "../store/action";
+import {StyleSheet, Text, View, Image, Modal, TouchableHighlight, TextInput, Button} from 'react-native';
+import {deleteOrder, fetchDishes, initialState, saveOrder, toggleModal} from "../store/action";
 import {connect} from "react-redux";
 
 class ModalW extends React.Component {
@@ -11,60 +11,87 @@ class ModalW extends React.Component {
         phone: '',
     };
 
-    changeName =(text) => {
+    changeName = (text) => {
         console.log('e current Traget ttttttttttttttttttt', text);
         this.setState({name: text});
     };
 
-    changeAddress =(text) => {
+    changeAddress = (text) => {
         console.log('e current Traget ttttttttttttttttttt', text);
         this.setState({address: text});
     };
 
-    changePhone =(text) => {
+    changePhone = (text) => {
         console.log('e current Traget ttttttttttttttttttt', text);
         this.setState({phone: text});
     };
 
     render() {
         return (
-            <View style = {styles.container}>
-                <Modal animationType = {"slide"} transparent = {false}
-                       visible = {this.props.modalVisible}
-                       onRequestClose = {() => { console.log("Modal has been closed.") } }>
+            <View style={styles.container}>
 
-                    <TextInput style = {styles.input}
-                               placeholder = "Ваше имя"
+                <Modal animationType={"slide"} transparent={false}
+                       visible={this.props.modalVisible}
+                       onRequestClose={() => {
+                           this.props.saveOrder();
+                       }}>
+
+                    <View style={styles.order_div}>
+                        <View><Text style={styles.text}>Ваш заказ :</Text></View>
+
+                        {this.props.orderList.length !== 0 ? this.props.orderList.map((item, ndx) => (
+                            <View style={styles.order_info} key={ndx}>
+                                <Text style={styles.text}>{item.name} </Text>
+                                <Text style={styles.text}> x {item.qty} шт </Text>
+                                <Text style={styles.text}> {item.cost * item.qty} сом  </Text>
+                                <TouchableHighlight onPress={() => {
+                                    this.props.toggleModal()
+                                }}>
+                                    <Text style={styles.text} onPress={(ndx) => {
+                                        this.props.deleteOrder(ndx);
+                                    }}>Удалить</Text>
+                                </TouchableHighlight>
+
+                            </View>)) : null}
+                        <View><Text style={styles.text}>Доставка : 150 сом</Text></View>
+                        <View><Text style={styles.text}>Итого : {this.props.total} сом</Text></View>
+                    </View>
+
+                    <TextInput style={styles.input}
+                               placeholder="Ваше имя"
                                name="name"
                                value={this.state.name}
-                               onChangeText = {text=>this.changeName(text)}/>
+                               onChangeText={text => this.changeName(text)}/>
 
-                    <TextInput style = {styles.input}
-                               placeholder = "Ваш адрес"
+                    <TextInput style={styles.input}
+                               placeholder="Ваш адрес"
                                name="address"
                                value={this.state.address}
-                               onChangeText = {text=>this.changeAddress(text)}/>
+                               onChangeText={text => this.changeAddress(text)}/>
 
-                    <TextInput style = {styles.input}
-                               placeholder = "Ваш телефон"
+                    <TextInput style={styles.input}
+                               placeholder="Ваш телефон"
                                name="phone"
                                value={this.state.phone}
-                               onChangeText = {text=>this.changePhone(text)}/>
+                               onChangeText={text => this.changePhone(text)}/>
 
 
-                    <View style = {styles.modal}>
+                    <View style={styles.modal}>
 
-                        <TouchableHighlight onPress = {() => {
-                            this.props.toggleModal(!this.props.modalVisible)}}>
+                        <TouchableHighlight onPress={() => {
+                            this.props.saveOrder();
+                        }}>
 
-                            <Text style = {styles.text}>Close Modal</Text>
+                            <Text style={styles.text}>Оплатить</Text>
+                        </TouchableHighlight>
+
+                        <TouchableHighlight onPress={() => {
+                            this.props.toggleModal()
+                        }}>
+                            <Text style={styles.text}>Отменить</Text>
                         </TouchableHighlight>
                     </View>
                 </Modal>
-
-                <TouchableHighlight onPress = {() => {this.props.toggleModal(true)}}>
-                    <Text style = {styles.text}>Open Modal</Text>
-                </TouchableHighlight>
             </View>
         );
     }
@@ -72,7 +99,7 @@ class ModalW extends React.Component {
 
 }
 
-const styles = StyleSheet.create ({
+const styles = StyleSheet.create({
     modal: {
         flex: 1,
         alignItems: 'center',
@@ -81,7 +108,8 @@ const styles = StyleSheet.create ({
     },
     text: {
         color: '#000',
-        marginTop: 10
+        marginTop: 10,
+        fontSize: 15,
     },
     input: {
         marginTop: 25,
@@ -90,6 +118,17 @@ const styles = StyleSheet.create ({
         borderWidth: 1,
         marginHorizontal: 10,
     },
+    order_info: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+    },
+    order_div: {
+        padding: 10,
+    },
+    delete_btn: {
+        marginLeft: 20,
+        height: 10,
+    }
 });
 
 const mapStateToProps = state => {
@@ -97,13 +136,20 @@ const mapStateToProps = state => {
     return {
         modalVisible: state.modalVisible,
         state: state,
+        orderList: state.orderList,
+        total: state.total,
     }
 };
 
 const mapDispatchToProps = dispatch => {
     return {
         toggleModal: () => dispatch(toggleModal()),
-        changeValue: (e) => dispatch(changeValue(e)),
+        saveOrder: (userData) => {
+            dispatch(saveOrder(userData));
+            dispatch(toggleModal());
+            dispatch(initialState());
+        },
+        deleteOrder: (ndx) => dispatch(deleteOrder(ndx))
     }
 };
 

@@ -8,19 +8,17 @@ import ModalW from "./ModalW";
 
 class Main extends React.Component {
 
-    state = {
-        total: null,
-    };
-
     componentDidMount() {
         this.props.fetchDishes();
     }
 
-    _onPressButton = (item) => {
+    _selectItem = () => {
     };
 
     render() {
-        this.props.menu ? console.log('Main js 45', Object.values(this.props.menu)) : null;
+
+        console.log('FULL STATE.MENU IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII', this.props.menu);
+        this.props.menu ? console.log('Main js 45 Object values(props.menu)', this.props.total) : null;
         return (
             <View style={styles.container}>
                 <View>
@@ -29,19 +27,22 @@ class Main extends React.Component {
                 <View style={styles.separator}/>
 
                 <View style={styles.dishes_list}>
+
                     {this.props.menu ? <FlatList
-                        data={Object.keys(this.props.menu)}
-                        renderItem={(item) => {
-                            console.log('Line 27 Main js=========================== ' + item.item);
-                            return <MenuItem item={item} key={item.item}/>
+
+                        data={Object.values(this.props.menu)}
+
+                        renderItem={({item}) => {
+                            console.log('Line 42 Main js (item) ======================== ' + item);
+                            return <MenuItem item={item} />
                         }}
-                        keyExtractor={item => item.item}/> : null}
+                        keyExtractor={item => item.name}/> : null}
                 </View>
 
                 <View style={styles.separator}/>
                 <View styles={styles.bottom}>
-                    <Text style={styles.logo_text}>Order total : {}</Text>
-                    <Button title="check out" onPress={this.props.modalVisible}>Checkout</Button>
+                    <Text style={styles.logo_text}>Общая сумма : {this.props.total > 0 ? this.props.total : 0}</Text>
+                    <Button title='Оформить' onPress={this.props.modalVisible}/>
                 </View>
                 {this.props.showModal ? <ModalW/> : null}
 
@@ -75,10 +76,13 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-    console.log('Main js state state state state state state state ', state);
+    console.log('Main state !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!', state.orderList);
+
     return {
         menu: state.menu,
         showModal: state.modalVisible,
+        orderList: state.orderList,
+        total: state.total,
     }
 };
 

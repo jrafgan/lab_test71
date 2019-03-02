@@ -4,15 +4,15 @@ import {addOrder, fetchDishes} from "../store/action";
 import {connect} from "react-redux";
 
 const MenuItem = (props) => {
-
+    console.log('MenuItem PROPS ++++++++++++++++++++++++++++++++++', props);
     return (
-        <TouchableOpacity onPress={()=>props.addOrder(props.menu[props.item.item])}>
-            <View style={styles.item_div} key={Math.random()}>
-                <Image key={Math.random()} source={{uri: props.menu[props.item.item].url}} style={styles.img}
-                       alt={props.menu[props.item.item].name}/>
-                <View key={props.item.index} style={styles.text_div}>
-                    <Text key={Math.random()} style={styles.text}>{props.menu[props.item.item].name}</Text>
-                    <Text key={Math.random()} style={styles.text}>{props.menu[props.item.item].cost} сом</Text>
+        <TouchableOpacity onPress={()=>props.addOrder(props.item)}>
+            <View style={styles.item_div}>
+                <Image source={{uri: props.item.url}} style={styles.img}
+                       alt={props.item.name}/>
+                <View style={styles.text_div}>
+                    <Text style={styles.text}>{props.item.name}</Text>
+                    <Text style={styles.text}>{props.item.cost} сом</Text>
                 </View>
             </View>
         </TouchableOpacity>
@@ -20,9 +20,6 @@ const MenuItem = (props) => {
 };
 
 const styles = StyleSheet.create({
-
-
-
     img: {
         height: 170,
         width: 170,
@@ -43,13 +40,6 @@ const styles = StyleSheet.create({
     },
 });
 
-const mapStateToProps = state => {
-    console.log('Main js 117 state ', state);
-    return {
-        menu: state.menu,
-    }
-};
-
 const mapDispatchToProps = dispatch => {
     console.log('fetchDishes');
     return {
@@ -57,4 +47,4 @@ const mapDispatchToProps = dispatch => {
     }
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(MenuItem);
+export default connect(null, mapDispatchToProps)(MenuItem);
