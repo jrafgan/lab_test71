@@ -26,6 +26,10 @@ class ModalW extends React.Component {
         this.setState({phone: text});
     };
 
+    saveUser = () => {
+        this.props.saveOrder(this.state)
+    };
+
     render() {
         return (
             <View style={styles.container}>
@@ -33,7 +37,7 @@ class ModalW extends React.Component {
                 <Modal animationType={"slide"} transparent={false}
                        visible={this.props.modalVisible}
                        onRequestClose={() => {
-                           this.props.saveOrder();
+                           this.saveUser();
                        }}>
 
                     <View style={styles.order_div}>
@@ -79,7 +83,7 @@ class ModalW extends React.Component {
                     <View style={styles.modal}>
 
                         <TouchableHighlight onPress={() => {
-                            this.props.saveOrder();
+                            this.saveUser();
                         }}>
 
                             <Text style={styles.text}>Оплатить</Text>

@@ -63,7 +63,7 @@ export const saveOrder = (userData) => {
             const menuKeysArr = Object.keys(state.menu);
             const menuValuesArr = Object.values(state.menu);
             const ndx = menuValuesArr.findIndex(elem=>elem.name === item.name);
-            order.orderedItems.push({id: menuKeysArr[ndx], qty: item.qty, key: id});
+            order.orderedItems.push({id: menuKeysArr[ndx], qty: item.qty});
         });
         console.log('orderInfo sent to API only id and qty ====', order);
         dispatch(fetchStart());
